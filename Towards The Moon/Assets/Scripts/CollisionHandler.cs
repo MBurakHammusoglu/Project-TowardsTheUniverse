@@ -5,7 +5,22 @@ using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     [SerializeField] float levelLoadDelay=1f;
+    [SerializeField] AudioClip success;
+    [SerializeField] AudioClip bomb;
+
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem crashParticles;
+
+ 
+    AudioSource audioSource;
+
+    bool isTransitioning=false;
+
+    private void Start() {
+        audioSource = GetComponent<AudioSource>();
+    }
     private void OnCollisionEnter(Collision other) {
+        if(isTransitioning==true){ return;}
         switch(other.gameObject.tag){
             case "Friendly":
             Debug.Log("Friendly Tag");
@@ -15,21 +30,35 @@ public class CollisionHandler : MonoBehaviour
             FinishSuccessSeqeuence();
             break;
             default:
-            Debug.Log("Çarpışma algılanmadı");
+            Debug.Log("Carpisma algilanmadi");
             StartCrashSeqeuence();
             break;
 
         }
         
     }
+
+
     void StartCrashSeqeuence(){
+        isTransitioning=true;
+        //audioSource.Stop();
+        audioSource.PlayOneShot(bomb);
+        successParticles.Play();
         GetComponent<Movement>().enabled = false;
         Invoke("ReloadLevel",levelLoadDelay);
     }
     void FinishSuccessSeqeuence(){
+        isTransitioning = true;
+        //audioSource.Stop();
+        audioSource.PlayOneShot(success);
+        crashParticles.Play();
         GetComponent<Movement>().enabled=false;
         Invoke("LoadNextLevel",levelLoadDelay);
     }
+
+
+
+
     void ReloadLevel(){
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         

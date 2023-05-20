@@ -6,6 +6,11 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] float upSpeedValue=100;
     [SerializeField] float rotationSpeedValue=100;
+    [SerializeField] AudioClip voiceEngine;
+
+    [SerializeField] ParticleSystem rocketJetParticles;
+    [SerializeField] ParticleSystem rightSideJetParticles;
+    [SerializeField] ParticleSystem leftSideJetParticles;
     Rigidbody rb;
     AudioSource audioSource;
     // Start is called before the first frame update
@@ -26,8 +31,9 @@ public class Movement : MonoBehaviour
         if(Input.GetKey(KeyCode.Space)){
             //Debug.Log("Pressed Space");
             rb.AddRelativeForce(Vector3.up * upSpeedValue * Time.deltaTime);
+            rocketJetParticles.Play();
             if(!audioSource.isPlaying){
-                audioSource.Play();
+                audioSource.PlayOneShot(voiceEngine);
             }
         }else{
             audioSource.Stop();
@@ -37,10 +43,12 @@ public class Movement : MonoBehaviour
         if(Input.GetKey(KeyCode.A))
         {
             ApplyRotation(rotationSpeedValue);
+            leftSideJetParticles.Play();
         }
         else if(Input.GetKey(KeyCode.D)){
             //Debug.Log("Rotating right");
             ApplyRotation(-rotationSpeedValue);
+            rightSideJetParticles.Play();
         }
 
     }
