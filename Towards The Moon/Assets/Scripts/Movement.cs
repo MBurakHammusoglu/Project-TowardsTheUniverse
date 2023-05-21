@@ -28,30 +28,78 @@ public class Movement : MonoBehaviour
     
     }
     void ProcessThrust(){
-        if(Input.GetKey(KeyCode.Space)){
-            //Debug.Log("Pressed Space");
-            rb.AddRelativeForce(Vector3.up * upSpeedValue * Time.deltaTime);
-            rocketJetParticles.Play();
-            if(!audioSource.isPlaying){
-                audioSource.PlayOneShot(voiceEngine);
-            }
-        }else{
-            audioSource.Stop();
+        if(Input.GetKey(KeyCode.Space))
+        {
+            StartThrusting();
+        }
+        else
+        {
+            StopThrusting();
         }
     }
+
+   
+
+    private void StartThrusting()
+    {
+        //Debug.Log("Pressed Space");
+        rb.AddRelativeForce(Vector3.up * upSpeedValue * Time.deltaTime);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(voiceEngine);
+        }
+        if (!rocketJetParticles.isPlaying) 
+        { rocketJetParticles.Play(); }
+    }
+    private void StopThrusting()
+    {
+        audioSource.Stop();
+        rocketJetParticles.Stop();
+    }
+
     void ProcessRotation(){
         if(Input.GetKey(KeyCode.A))
         {
-            ApplyRotation(rotationSpeedValue);
-            leftSideJetParticles.Play();
+            RotateLeft();
         }
-        else if(Input.GetKey(KeyCode.D)){
-            //Debug.Log("Rotating right");
-            ApplyRotation(-rotationSpeedValue);
-            rightSideJetParticles.Play();
+        else if(Input.GetKey(KeyCode.D))
+        {
+            RotateRight();
+        }else
+        {
+            StopRotate();
         }
 
     }
+
+   
+     private void RotateLeft()
+    {
+        ApplyRotation(rotationSpeedValue);
+        if (!leftSideJetParticles.isPlaying)
+        {
+            leftSideJetParticles.Play();
+            rightSideJetParticles.Stop();
+        }
+    }
+
+    private void RotateRight()
+    {
+        //Debug.Log("Rotating right");
+        ApplyRotation(-rotationSpeedValue);
+        if (!rightSideJetParticles.isPlaying)
+        {
+            rightSideJetParticles.Play();
+            leftSideJetParticles.Stop();
+        }
+    }
+     private void StopRotate()
+    {
+        rightSideJetParticles.Stop();
+        leftSideJetParticles.Stop();
+    }
+
+   
 
     private void ApplyRotation(float rotationThisFrame)
     {
